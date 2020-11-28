@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"go.ybk.im/x/servers"
+	"go.ybk.im/x/http/servers"
 )
 
 var handler http.HandlerFunc = func(w http.ResponseWriter, r *http.Request) {
