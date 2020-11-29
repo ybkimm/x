@@ -20,7 +20,7 @@ func (*TestFS) Open(name string) (File, error) {
 		Reader: bytes.NewReader(
 			[]byte(`
 				{{- define "content" -}}
-					{{ .Name }}: hello, world!
+					{{ helloWorld .Name }}
 				{{- end -}}
 				{{- template "layout" . -}}
 			`),

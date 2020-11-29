@@ -1,6 +1,8 @@
 package templates
 
 import (
+	"fmt"
+	"html/template"
 	"strconv"
 	"strings"
 	"testing"
@@ -9,6 +11,11 @@ import (
 func TestRender(t *testing.T) {
 	tpls := New(&TestFS{})
 	tpls.UseTemplate("layout.html")
+	tpls.UseFuncs(template.FuncMap{
+		"helloWorld": func(name string) string {
+			return fmt.Sprintf("%s: hello, world!", name)
+		},
+	})
 
 	t.Run("render", func(t *testing.T) {
 		var expected = "chieri: hello, world!"

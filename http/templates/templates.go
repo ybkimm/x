@@ -28,6 +28,10 @@ func (t *Templates) open(name string) ([]byte, error) {
 	return ioutil.ReadAll(f)
 }
 
+func (t *Templates) UseFuncs(funcs template.FuncMap) {
+	t.tpl.Funcs(funcs)
+}
+
 func (t *Templates) parse(tpl *template.Template, name, src string) (*template.Template, error) {
 	if tpl == nil {
 		clone, err := t.tpl.Clone()
