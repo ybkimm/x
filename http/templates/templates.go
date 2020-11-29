@@ -28,25 +28,48 @@ func (t *Templates) open(name string) ([]byte, error) {
 	return ioutil.ReadAll(f)
 }
 
-func (t *Templates) parse(name, src string) (*template.Template, error) {
-	clone, err := t.tpl.Clone()
-	if err != nil {
-		return nil, err
+func (t *Templates) parse(tpl *template.Template, name, src string) (*template.Template, error) {
+	if tpl == nil {
+		clone, err := t.tpl.Clone()
+		if err != nil {
+			return nil, err
+		}
+		tpl = clone
 	}
-	return clone.New(name).Parse(src)
+	return tpl.New(name).Parse(src)
 }
 
-// Render renders the template and write it's result to w.
-func (t *Templates) Render(w io.Writer, name string, data interface{}) error {
+// UseTemplate loads a template file to base.
+func (t *Templates) UseTemplate(name string) error {
 	buf, err := t.open(name)
 	if err != nil {
 		return err
 	}
 
-	tpl, err := t.parse(name, string(buf))
+	tpl, err := t.parse(t.tpl, "name", string(buf))
+	if err != nil {
+		return err
+	}
+
+	t.tpl = tpl
+	return nil
+}
+
+func (t *Templates) render(w io.Writer, name string, data interface{}) error {
+	buf, err := t.open(name)
+	if err != nil {
+		return err
+	}
+
+	tpl, err := t.parse(nil, name, string(buf))
 	if err != nil {
 		return err
 	}
 
 	return tpl.ExecuteTemplate(w, name, data)
+}
+
+// Render renders the template and write it's result to w.
+func (t *Templates) Render(w io.Writer, name string, data interface{}) error {
+	return t.render(w, name, data)
 }
